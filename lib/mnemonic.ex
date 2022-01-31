@@ -3,7 +3,7 @@ defmodule Mnemonic do
   BIP39 Implementation
   """
 
-  alias Mnemonic.{Crypto, Wordlist}
+  alias Mnemonic.Wordlist
 
   @languages [
     :english,
@@ -41,7 +41,7 @@ defmodule Mnemonic do
 
   @doc ~S"""
   Generate mnemonic sentences with given entropy length(in bits) and mnemonic language.
-  Allowed entropy length are 128, 160, 192, 224 and 256. Supported languages are English, 
+  Allowed entropy length are 128, 160, 192, 224 and 256. Supported languages are English,
   Chinese(Simplified), Chinese(Tranditional), Japanese, Korean, Spanish, French and Italian.
   """
   @spec generate(ent :: integer(), lang :: language()) :: String.t() | {:error, term()}
@@ -55,7 +55,7 @@ defmodule Mnemonic do
 
   @doc ~S"""
   Generate mnemonic sentences with given entropy and mnemonic language. The bits size of entropy
-  should be in 128, 160, 192, 224 and 256. Supported languages are English, Chinese(Simplified), 
+  should be in 128, 160, 192, 224 and 256. Supported languages are English, Chinese(Simplified),
   Chinese(Tranditional), Japanese, Korean, Spanish, French and Italian.
 
   ## Examples
@@ -80,8 +80,8 @@ defmodule Mnemonic do
       iex> mnemonic = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
       iex> Mnemonic.to_seed(mnemonic, "TREZOR", :english)
       <<197, 82, 87, 195, 96, 192, 124, 114, 2, 154, 235, 193, 181, 60, 5, 237, 3, 98,
-        173, 163, 142, 173, 62, 62, 158, 250, 55, 8, 229, 52, 149, 83, 31, 9, 166, 152, 
-        117, 153, 209, 130, 100, 193, 225, 201, 47, 44, 241, 65, 99, 12, 122, 60, 74, 
+        173, 163, 142, 173, 62, 62, 158, 250, 55, 8, 229, 52, 149, 83, 31, 9, 166, 152,
+        117, 153, 209, 130, 100, 193, 225, 201, 47, 44, 241, 65, 99, 12, 122, 60, 74,
         183, 200, 27, 47, 0, 22, 152, 231, 70, 59, 4>>
 
   """
@@ -90,7 +90,7 @@ defmodule Mnemonic do
   def to_seed(mnemonic, passphrase \\ "", lang) when is_binary(mnemonic) do
     with mnemonic = normalize(mnemonic),
          {:ok, _entropy} <- validate(mnemonic, lang) do
-      Crypto.pbkdf2(&Crypto.hmac_sha512/2, mnemonic, salt(passphrase), 2048)
+      :crypto.pbkdf2_hmac(:sha512, mnemonic, salt(passphrase), 2048, 64)
     end
   end
 
@@ -125,7 +125,7 @@ defmodule Mnemonic do
       |> bit_size()
       |> div(32)
 
-    <<checksum::bits-size(cs), _rest::bits>> = Crypto.sha256(entropy)
+    <<checksum::bits-size(cs), _rest::bits>> = :crypto.hash(:sha256, entropy)
     <<entropy::bits, checksum::bits>>
   end
 
@@ -210,7 +210,7 @@ defmodule Mnemonic do
   defp validate_checksum({:ok, entropy, checksum}) do
     cs = bit_size(checksum)
 
-    <<valid_checksum::bits-size(cs), _rest::bits>> = Crypto.sha256(entropy)
+    <<valid_checksum::bits-size(cs), _rest::bits>> = :crypto.hash(:sha256, entropy)
 
     if valid_checksum == checksum do
       {:ok, entropy}

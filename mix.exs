@@ -7,7 +7,7 @@ defmodule Mnemonic.MixProject do
     [
       app: :mnemonic,
       version: "0.1.0",
-      elixir: "~> 1.8",
+      elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
@@ -24,8 +24,8 @@ defmodule Mnemonic.MixProject do
 
   defp deps do
     [
-      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev, :test], runtime: false},
-      {:ex_doc, "~> 0.19", only: :dev}
+      {:dialyxir, "~> 1.1", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.28", only: :dev}
     ]
   end
 
