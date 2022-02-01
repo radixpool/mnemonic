@@ -13,7 +13,9 @@ defmodule Mnemonic do
     :italian,
     :japanese,
     :korean,
-    :spanish
+    :spanish,
+    :czech,
+    :portuguese
   ]
 
   @valid_entropy_length [128, 160, 192, 224, 256]
@@ -38,11 +40,14 @@ defmodule Mnemonic do
           | :japanese
           | :korean
           | :spanish
+          | :czech
+          | :portuguese
 
   @doc ~S"""
   Generate mnemonic sentences with given entropy length(in bits) and mnemonic language.
   Allowed entropy length are 128, 160, 192, 224 and 256. Supported languages are English,
-  Chinese(Simplified), Chinese(Tranditional), Japanese, Korean, Spanish, French and Italian.
+  Chinese(Simplified), Chinese(Tranditional), Japanese, Korean, Spanish, Czech, Portuguese,
+  French and Italian.
   """
   @spec generate(ent :: integer(), lang :: language()) :: String.t() | {:error, term()}
   def generate(ent, lang) when valid_ent?(ent) and supported_lang?(lang) do
@@ -56,7 +61,7 @@ defmodule Mnemonic do
   @doc ~S"""
   Generate mnemonic sentences with given entropy and mnemonic language. The bits size of entropy
   should be in 128, 160, 192, 224 and 256. Supported languages are English, Chinese(Simplified),
-  Chinese(Tranditional), Japanese, Korean, Spanish, French and Italian.
+  Chinese(Tranditional), Japanese, Korean, Spanish, Czech, Portuguese, French and Italian.
 
   ## Examples
 

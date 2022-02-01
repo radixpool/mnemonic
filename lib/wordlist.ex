@@ -9,7 +9,9 @@ defmodule Mnemonic.Wordlist do
     :italian,
     :japanese,
     :korean,
-    :spanish
+    :spanish,
+    :czech,
+    :portuguese
   ]
 
   for lang <- @languages do
