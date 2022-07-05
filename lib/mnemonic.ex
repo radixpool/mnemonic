@@ -50,6 +50,8 @@ defmodule Mnemonic do
   French and Italian.
   """
   @spec generate(ent :: integer(), lang :: language()) :: String.t() | {:error, term()}
+  def generate(ent, lang \\ :english)
+
   def generate(ent, lang) when valid_ent?(ent) and supported_lang?(lang) do
     ent
     |> generate_entropy()
@@ -71,7 +73,8 @@ defmodule Mnemonic do
 
   """
   @spec from_entropy(entropy :: binary(), lang :: language()) :: String.t() | {:error, term()}
-  def from_entropy(entropy, lang) when valid_entropy?(entropy) and supported_lang?(lang) do
+  def from_entropy(entropy, lang \\ :english)
+      when valid_entropy?(entropy) and supported_lang?(lang) do
     entropy
     |> append_checksum()
     |> generate_mnemonic(lang)
@@ -92,7 +95,8 @@ defmodule Mnemonic do
   """
   @spec to_seed(mnemonic :: String.t(), passphrase :: String.t(), lang :: language()) ::
           binary | {:error, term()}
-  def to_seed(mnemonic, passphrase \\ "", lang) when is_binary(mnemonic) do
+
+  def to_seed(mnemonic, passphrase \\ "", lang \\ :english) when is_binary(mnemonic) do
     with mnemonic = normalize(mnemonic),
          {:ok, _entropy} <- validate(mnemonic, lang) do
       :crypto.pbkdf2_hmac(:sha512, mnemonic, salt(passphrase), 2048, 64)
@@ -109,7 +113,7 @@ defmodule Mnemonic do
       {:ok, <<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>}
   """
   @spec validate(mnemonic :: String.t(), lang :: language()) :: {:ok, binary()} | {:error, term()}
-  def validate(mnemonic, lang) when is_binary(mnemonic) and supported_lang?(lang) do
+  def validate(mnemonic, lang \\ :english) when is_binary(mnemonic) and supported_lang?(lang) do
     mnemonic
     |> mnemonic_to_words()
     |> words_to_checksummed_entropy(lang)
