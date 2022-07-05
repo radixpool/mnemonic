@@ -142,19 +142,15 @@ defmodule Mnemonic do
       end
 
     entropy
-    |> split_to_group()
+    |> chunk()
     |> Enum.map(&Wordlist.at(lang, &1))
     |> Enum.join(joiner)
   end
 
-  defp split_to_group(entropy) do
-    do_split_to_group(entropy, [])
-  end
-
-  defp do_split_to_group(<<>>, groups), do: groups
-
-  defp do_split_to_group(<<group::11, rest::bits>>, groups) do
-    do_split_to_group(rest, groups ++ [group])
+  defp chunk(entropy) do
+    for <<chunk::11 <- entropy>> do
+      chunk
+    end
   end
 
   defp mnemonic_to_words(mnemonic) do
